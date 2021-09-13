@@ -1,4 +1,4 @@
-# About Project "Crypto Assets"
+# About Aplikasi "Crypto Assets"
 
 Project combinasi ROOM Database dan API
 
