@@ -65,11 +65,17 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
                             itemView.findViewById(R.id.tv_volume_isi)
                     )
             );
+            NumberFormat dc = new DecimalFormat("#.#######");
             NumberFormat df = new DecimalFormat("#.###");
+            NumberFormat dn = new DecimalFormat("#,###,###");
+
             textViews.get(0).setText(entity.getId());
             textViews.get(1).setText(entity.getNama());
-            textViews.get(2).setText(df.format(entity.getHarga()) + " USD");
-            textViews.get(3).setText(df.format(entity.getVol24h()));
+            if(entity.getHarga() < 0.001)
+                textViews.get(2).setText(dc.format(entity.getHarga()) + " USD");
+            else
+                textViews.get(2).setText(df.format(entity.getHarga()) + " USD");
+            textViews.get(3).setText(dn.format(entity.getVol24h()));
 
             cardView.setOnClickListener(new View.OnClickListener() {
                 @Override
