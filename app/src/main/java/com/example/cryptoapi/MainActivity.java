@@ -15,14 +15,11 @@ import com.example.cryptoapi.model.AssetsItem;
 import com.example.cryptoapi.service.CryptoListener;
 import com.example.cryptoapi.service.CryptoServices;
 
-import org.json.JSONException;
-
-import java.io.IOException;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    boolean isOnline;
+    boolean isFill;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,26 +27,24 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
 
+        isOnline = false;
+        isFill = false;
+
         new CryptoServices().getAsset(CryptoListener);
 
-        FragmentManager mFragmentManager = getSupportFragmentManager();
-        SplashFragment mFragmentSplash = new SplashFragment();
-        Fragment fragmentSplash = mFragmentManager.findFragmentByTag(SplashFragment.class.getSimpleName());
 
-        if (!(fragmentSplash instanceof SplashFragment)) {
-            mFragmentManager.beginTransaction()
-                    .add(R.id.fl_main, mFragmentSplash, SplashFragment.class.getSimpleName())
-                    .commit();
-        }
     }
 
-    CryptoListener<List<AssetsItem>> CryptoListener = new CryptoListener<List<AssetsItem>>() {
+
+   CryptoListener<List<AssetsItem>> CryptoListener = new CryptoListener<List<AssetsItem>>() {
         @Override
         public void onSuccess(List<AssetsItem> items) {
             boolean check;
+            isFill = true;
+            isOnline = true;
             Database databaseRoom = Database.getInstance(getApplication());
             Dao dao = databaseRoom.dao();
-            //NumberFormat df = new DecimalFormat("#.###");
+
             Log.d("masuk sini", String.valueOf(items.size()));
 
             if (dao.getAllData().isEmpty()) check=true;
@@ -70,20 +65,42 @@ public class MainActivity extends AppCompatActivity {
                 if(check) dao.insert(entity);
                 else dao.update(entity);
             }
+            splash();
         }
 
         @Override
         public void onFailed(String msg) {
+            isOnline = false;
+
             Log.d("ISI ERROR", msg);
             Database databaseROOM = Database.getInstance(getApplication());
             Dao dao = databaseROOM.dao();
 
             if(dao.getAllData().isEmpty()){
+                isFill = false;
                 Log.d("ISI DATABASE : ", "Kosongggg!!!");
             }else{
+                isFill = true;
                 Log.d("ISI DATABASE : ", "ADA!!!");
+                Log.d("tag", String.valueOf(isFill));
             }
-
+            splash();
         }
+
+
     };
+
+    void splash(){
+        FragmentManager mFragmentManager = getSupportFragmentManager();
+        SplashFragment mFragmentSplash = new SplashFragment();
+        Fragment fragmentSplash = mFragmentManager.findFragmentByTag(SplashFragment.class.getSimpleName());
+        mFragmentSplash.setOnline(isOnline);
+        mFragmentSplash.setFill(isFill);
+
+        if (!(fragmentSplash instanceof SplashFragment)) {
+            mFragmentManager.beginTransaction()
+                    .add(R.id.fl_main, mFragmentSplash, SplashFragment.class.getSimpleName())
+                    .commit();
+        }
+    }
 }

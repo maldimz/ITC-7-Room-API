@@ -14,7 +14,18 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.example.cryptoapi.database.Dao;
+import com.example.cryptoapi.database.Database;
+import com.example.cryptoapi.database.Entity;
+import com.example.cryptoapi.model.AssetsItem;
+import com.example.cryptoapi.service.CryptoListener;
+import com.example.cryptoapi.service.CryptoServices;
+
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,8 +36,29 @@ public class SplashFragment extends Fragment {
 
     Animation topAnim, fadeAnim, bottomAnim;
     ImageView ivGambar;
-    TextView tvJudul;
+    TextView tvJudul, tvProses;
     LinearLayout llBack;
+    ProgressBar pbProses;
+
+    boolean isOnline;
+    boolean isFill;
+
+    public boolean isOnline() {
+        return isOnline;
+    }
+
+    public void setOnline(boolean online) {
+        isOnline = online;
+    }
+
+    public boolean isFill() {
+        return isFill;
+    }
+
+    public void setFill(boolean fill) {
+        isFill = fill;
+    }
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,22 +112,40 @@ public class SplashFragment extends Fragment {
         llBack = view.findViewById(R.id.ll_back);
         ivGambar = view.findViewById(R.id.iv_gambar);
         tvJudul = view.findViewById(R.id.tv_judul);
+        tvProses = view.findViewById(R.id.tv_proses);
+        pbProses = view.findViewById(R.id.pb_proses);
 
         llBack.setAnimation(fadeAnim);
         ivGambar.setAnimation(bottomAnim);
         tvJudul.setAnimation(topAnim);
+        tvProses.setAnimation(fadeAnim);
+        pbProses.setAnimation(fadeAnim);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MenuFragment menuFragment = new MenuFragment();
-                FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                transaction.replace(R.id.fl_main, menuFragment);
-                transaction.commit();
-                Log.d("Loading", "run: " + "Masuk ke Menu!");
-            }
-        },3000);
+        if(isOnline && isFill){
+            tvProses.setText("Menghubungkan Data");
+            Toast.makeText(getActivity(), "Online!", Toast.LENGTH_SHORT).show();
+        }else if(!isOnline && isFill){
+            tvProses.setText("Membuka Data");
+            Toast.makeText(getActivity(), "Offline!", Toast.LENGTH_SHORT).show();
+        }else{
+            tvProses.setText("Menunggu Jaringan");
+            Toast.makeText(getActivity(), "Check Internet, Restart App", Toast.LENGTH_SHORT).show();
+        }
+
+        if(isFill){
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    MenuFragment menuFragment = new MenuFragment();
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.fl_main, menuFragment);
+                    transaction.commit();
+                    Log.d("Loading", "run: " + "Masuk ke Menu!");
+                }
+            },3000);
+        }
 
         return view;
     }
+
 }
