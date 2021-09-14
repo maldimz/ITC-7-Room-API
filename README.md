@@ -1,10 +1,10 @@
-# About Project
+# About Aplikasi "Crypto Assets"
 
 Project combinasi ROOM Database dan API
 
 ## Spesifikasi Aplikasi
 * Data akan update setelah internet terhubung
-* Aplikasi dapat di gunakan ketika internet mati
+* Aplikasi dapat digunakan ketika internet mati
 
 # Author
 Created by Maldimz
