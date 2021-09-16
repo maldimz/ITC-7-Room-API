@@ -141,11 +141,7 @@ public class MenuFragment extends Fragment {
                 }else if(currentItem + scrollItems != 100)
                     halMax = false;
             }
-
-
         });
-
-
         return view;
     }
 
